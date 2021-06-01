@@ -1,8 +1,10 @@
 {
   "development": {
-    "url": "YOUR_ELEPHANTSQL_URL_HERE",
-    "dialect": "postgres",
-    "operatorsAliases": "0"
+    "username": "postgres",
+    "password": "postgres",
+    "database": "assessment-6",
+    "host": "localhost",
+    "dialect": "postgres"
   },
   "test": {
     "username": "root",
