@@ -5,6 +5,8 @@ const Bid = require("../models").bid;
 
 const router = new Router();
 
+/**Get all artworks */
+
 router.get("/", async (req, res) => {
   // don't send back the password hash
 
@@ -12,9 +14,11 @@ router.get("/", async (req, res) => {
     include: [Bid],
     order: [[Bid, "createdAt", "DESC"]],
   });
+  console.log("when i fetch", artworks[1].hearts);
   res.status(200).send({ message: "ok", artworks });
 });
 
+/**Get arwork by id */
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -33,6 +37,19 @@ router.get("/:id", async (req, res) => {
   }
 
   res.status(200).send({ message: "ok", artwork });
+});
+
+/**Change the hearts */
+
+router.patch("/:id", async (req, res) => {
+  const artwork = await Artwork.findByPk(req.params.id);
+
+  const { hearts } = req.body;
+  console.log(hearts);
+
+  await artwork.update({ hearts });
+
+  return res.status(200).send({ artwork });
 });
 
 module.exports = router;
