@@ -28,6 +28,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      isArtist: {
+        type: DataTypes.BOOLEAN,
+      },
     },
     {
       sequelize,
