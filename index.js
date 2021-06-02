@@ -152,7 +152,7 @@ app.post("/authorized_post_request", authMiddleWare, (req, res) => {
 });
 
 app.use("/", authRouter);
-app.use("/", artRouter);
+app.use("/artworks", artRouter);
 
 // Listen for connections on specified port (default is port 4000)
 

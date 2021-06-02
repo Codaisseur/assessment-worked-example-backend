@@ -15,4 +15,24 @@ router.get("/", async (req, res) => {
   res.status(200).send({ message: "ok", artworks });
 });
 
+router.get("/:id", async (req, res) => {
+  const { id } = req.params;
+
+  console.log(id);
+  if (isNaN(parseInt(id))) {
+    return res.status(400).send({ message: "artwork id is not a number" });
+  }
+
+  const artwork = await Artwork.findByPk(id, {
+    include: [Bid],
+    order: [[Bid, "createdAt", "DESC"]],
+  });
+
+  if (artwork === null) {
+    return res.status(404).send({ message: "artwork not found" });
+  }
+
+  res.status(200).send({ message: "ok", artwork });
+});
+
 module.exports = router;
