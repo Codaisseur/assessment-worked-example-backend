@@ -19,6 +19,27 @@ router.get("/", async (req, res) => {
   res.status(200).send({ message: "ok", artworks });
 });
 
+router.post("/", authMiddleware, async (req, res) => {
+  const { title, imageUrl, minimumBid } = req.body;
+
+  console.log(10, title, imageUrl, minimumBid);
+
+  if (!title || !imageUrl || !minimumBid) {
+    return res
+      .status(400)
+      .send({ message: "A story must have a title, imageUrl and minimumBid" });
+  }
+  const artwork = await Artwork.create({
+    title,
+    imageUrl,
+    hearts: 0,
+    minimumBid,
+    userId: req.user.id,
+  });
+
+  return res.status(201).send({ message: "Artwork created", artwork });
+});
+
 /**Get arwork by id */
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
