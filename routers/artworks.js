@@ -78,26 +78,21 @@ router.patch("/:id", async (req, res, next) => {
   }
 });
 
+
 router.post("/:id/bids", authMiddleware, async (req, res) => {
-  const artwork = await Artwork.findByPk(req.params.id);
+  try {
+    const artwork = await Artwork.findByPk(req.params.id, { include: [Bid] });
 
   if (artwork === null) {
     return res.status(404).send({ message: "This artwork does not exist" });
   }
 
-  const bids = await Bid.findAll({
-    where: { artworkId: req.params.id },
-    // order: [[Bid, "createdAt", "DESC"]],
-  });
+  const currentBids = artwork.bids.map(b => b.amount)
 
-  const lastMaxBid =
-    bids.length > 0 ? bids[bids.length - 1].amount + 1 : artwork.minimumBid;
+  const maxCurrentBid = currentBids.length ? Math.max(...currentBids) : artwork.minimumBid;
 
-  /**The +1 here it's placed so I can use the same comparation
-   *  for the first bid (min value = to minimumbid) and the rest (min value > lastbid) */
   const { amount } = req.body;
   const email = req.user.email;
-  console.log(amount, email, lastMaxBid);
 
   if (!email || !amount) {
     return res
@@ -105,7 +100,7 @@ router.post("/:id/bids", authMiddleware, async (req, res) => {
       .send({ message: "A bid must have an asociated email and an amount" });
   }
 
-  if (amount < lastMaxBid) {
+  if (amount <= maxCurrentBid) {
     return res.status(400).send({ message: "Your bid was too low" });
   }
 
@@ -116,6 +111,10 @@ router.post("/:id/bids", authMiddleware, async (req, res) => {
   });
 
   return res.status(201).send({ message: "Bid created", bid });
+  
+  } catch(e) {
+    next(e)
+  }
 });
 
 module.exports = router;
