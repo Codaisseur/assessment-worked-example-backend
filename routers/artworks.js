@@ -63,15 +63,19 @@ router.get("/:id", async (req, res) => {
 
 /**Change the hearts */
 
-router.patch("/:id", async (req, res) => {
-  const artwork = await Artwork.findByPk(req.params.id);
-
-  const { hearts } = req.body;
-  console.log(hearts);
-
-  await artwork.update({ hearts });
-
-  return res.status(200).send({ artwork });
+router.patch("/:id", async (req, res, next) => {
+  try {
+    const artwork = await Artwork.findByPk(req.params.id);
+    
+    if (!artwork) {
+      return res.status(404).send("Artwork doesn't exist")
+    }
+    await artwork.update({ hearts: artwork.hearts + 1 });
+  
+    return res.status(200).send({ artwork });
+  } catch(e) {
+    next(e);
+  }
 });
 
 router.post("/:id/bids", authMiddleware, async (req, res) => {
@@ -85,7 +89,7 @@ router.post("/:id/bids", authMiddleware, async (req, res) => {
     where: { artworkId: req.params.id },
     // order: [[Bid, "createdAt", "DESC"]],
   });
-  console.log(bids);
+
   const lastMaxBid =
     bids.length > 0 ? bids[bids.length - 1].amount + 1 : artwork.minimumBid;
 

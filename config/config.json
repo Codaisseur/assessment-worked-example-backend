@@ -1,9 +1,6 @@
 {
   "development": {
-    "username": "postgres",
-    "password": "postgres",
-    "database": "assessment-6",
-    "host": "localhost",
+    "url": "postgres://dgfttxue:Xv67gaqD1dBMLD4PNTxlM3aQVXnwUuup@hattie.db.elephantsql.com/dgfttxue",
     "dialect": "postgres"
   },
   "test": {
