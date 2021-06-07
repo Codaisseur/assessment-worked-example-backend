@@ -8,25 +8,22 @@ const router = new Router();
 
 /**Get all artworks */
 
-router.get("/", async (req, res) => {
-  // don't send back the password hash
+router.get("/", async (req, res, next) => {
   try {
     const artworks = await Artwork.findAll({
       include: [Bid],
       order: [[Bid, "createdAt", "DESC"]],
     });
-    console.log("when i fetch", artworks[1].hearts);
+
     res.status(200).send({ message: "ok", artworks });
   } catch(e) {
     next(e)
   }
 });
 
-router.post("/", authMiddleware, async (req, res) => {
+router.post("/", authMiddleware, async (req, res, next) => {
   try {
     const { title, imageUrl, minimumBid } = req.body;
-  
-    console.log(10, title, imageUrl, minimumBid);
   
     if (!title || !imageUrl || !minimumBid) {
       return res
@@ -48,7 +45,7 @@ router.post("/", authMiddleware, async (req, res) => {
 });
 
 /**Get arwork by id */
-router.get("/:id", async (req, res) => {
+router.get("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
   
@@ -90,7 +87,7 @@ router.patch("/:id", async (req, res, next) => {
 });
 
 
-router.post("/:id/bids", authMiddleware, async (req, res) => {
+router.post("/:id/bids", authMiddleware, async (req, res, next) => {
   try {
     const artwork = await Artwork.findByPk(req.params.id, { include: [Bid] });
 
